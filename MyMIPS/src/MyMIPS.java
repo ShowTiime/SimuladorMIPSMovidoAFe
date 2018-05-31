@@ -333,6 +333,75 @@ public class MyMIPS implements MIPS {
 		
 	}
 	
+	public static String sltuAuxiliar(String value, int size) {
+		if (value == null) {
+			value = "";
+		}
+		
+		String valorRS = value;
+		
+			if ((valorRS.charAt(0)) == '1') { //completar 32 bits
+				while ( valorRS.length() < size ) {
+					valorRS = '1' + valorRS;
+				}
+			} else {
+				while ( valorRS.length() < size ) {
+					valorRS = '0' + valorRS;
+				}
+			}
+			
+		return valorRS;
+	}
+	
+	public static String sllAuxiliar(String value, int size) {
+		if (value == null) {
+			value = "";
+		}
+		
+		String result = value;
+		
+		if ((result.charAt(0)) == '1') {
+			  while ( result.length() < size ) {
+				result = '1' + result;
+			}
+			
+			String novoResult = "";
+			  
+			for (int i = 31; i >= 0; i--) { //Complemento a 1
+				if (result.charAt(i) == '1') {
+					novoResult = '0' +  novoResult;
+				} else {
+					novoResult = '1' +  novoResult;
+				}
+			}
+			
+			String novoResultFinal = "";
+			boolean carryIn = true;
+			for (int i = 31; i >= 0; i--) { //Complemento a 2
+				if (novoResult.charAt(i) == '1' && carryIn == true) {
+					novoResultFinal = '0' + novoResultFinal;
+					carryIn = true;
+				} else if (carryIn == true){
+					novoResultFinal = '1' + novoResultFinal;
+					carryIn = false;
+				} else {
+					novoResultFinal = novoResult.charAt(i) + novoResultFinal;
+				}
+			}
+			
+			result = novoResultFinal;
+			
+			result = '-' + result;
+			
+		} else {
+			while ( result.length() < size ) {
+				result = '0' + result;
+			}
+		}
+		
+		return result;
+	}
+	
 	//aqui
 	
 	public static void InstTipoR (String instrucaoAtual, State state) {
@@ -394,10 +463,34 @@ public class MyMIPS implements MIPS {
 			state.writeRegister(rd, resultado);
 			break;
 			
-		case "":
+		case "101011":	//FUNÇÃO SLTU
+				valorRS = Integer.parseInt(sltuAuxiliar(Integer.toBinaryString(valorRS), 32), 2);
+				valorRT = Integer.parseInt(sltuAuxiliar(Integer.toBinaryString(valorRT), 32), 2);
 				
+				if (valorRS < valorRT) {
+					resultado = 1;
+				} else {
+					resultado = 0;
+				}
+				
+				state.writeRegister(rd, resultado);
 			break;
-
+			
+		case "000000":	//FUNÇÃO SLL
+				valorRT = Integer.parseInt(sllAuxiliar(Integer.toBinaryString(valorRT), 32), 2);
+				
+				if (shamt != 0) {
+					resultado = valorRT * 2;
+					for (int i = 1; i < shamt; i++) {
+						resultado *= 2;
+					}
+				} else {
+					resultado = valorRT;
+				}
+				
+				state.writeRegister(rd, resultado);
+			break;
+			
 		default:
 			break;
 		}
