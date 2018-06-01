@@ -107,7 +107,9 @@ public class MyMIPS implements MIPS {
 		return result;
 	}
 	
-	public static String adduAuxiliar(String value, int size) {
+	public static String binarioUnsigned (string value, int size) {
+		// Mesmo código da função adduAuxiliar que pedro fez, só deixei o nome de uma forma mais genérica
+		//  pra evitar repetição de codigo
 		if (value == null) {
 			value = "";
 		}
@@ -126,6 +128,8 @@ public class MyMIPS implements MIPS {
 			
 		return rg;
 	}
+	
+	
 	
 	public static String andAuxiliar(String rgRS, String rgRT, int size) {
 		if (rgRS == null) {
@@ -424,8 +428,8 @@ public class MyMIPS implements MIPS {
 			break;
 			
 		case "100001": 	//FUNÇÃO ADDU
-				valorRS = Integer.parseInt(adduAuxiliar(Integer.toBinaryString(valorRS), 32), 2);
-				valorRT = Integer.parseInt(adduAuxiliar(Integer.toBinaryString(valorRT), 32), 2);
+				valorRS = Integer.parseInt(binarioUnsigned(Integer.toBinaryString(valorRS), 32), 2);
+				valorRT = Integer.parseInt(binarioUnsigned(Integer.toBinaryString(valorRT), 32), 2);
 				resultado = valorRS + valorRT;
 				state.writeRegister(rd, resultado);
 			break;
@@ -491,6 +495,31 @@ public class MyMIPS implements MIPS {
 				state.writeRegister(rd, resultado);
 			break;
 			
+		case "000010": // FUNÇÂO SRL
+				valorRT = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRT), 32), 2);
+				if(shamt != 0) {
+					resultado = valorRT >> shamt;
+				
+				}else {
+					resultado = valorRT
+				}
+				state.writeRegister(rd, resultado);
+			break;
+			
+		case "100010": //FUNÇÃO SUB
+				valorRS = Integer.parseInt((BinarioComSinal(Integer.toBinaryString(valorRS), 32)), 2);
+				valorRT = Integer.parseInt(BinarioComSinal(Integer.toBynaryString(valorRT), 32), 2);
+				resultado = valorRS - valorRT;
+				state.writeRegister(rd, resultado);
+			break;
+			
+		case "100011": //FUNÇÃO SUBU
+				valorRS = Integer.parseInt(binarioUnsigned(Integer.toBinaryString(valorRS), 32), 2);
+				valorRT = Integer.parseInt(binarioUnsigned(Integer.toBinaryString(valorRT), 32), 2);
+				resultado = valorRS - valorRT;
+				state.writeRegister(rd, resultado);
+			break;
+			
 		default:
 			break;
 		}
@@ -498,6 +527,10 @@ public class MyMIPS implements MIPS {
 	}
 	
 	public static void InstTipoI (String instrucaoAtual, State state) {
+		Integer rs = Integer.parseInt((instrucaoAtual.substring(6, 11)), 2);
+		Integer rt = Integer.parseInt((instrucaoAtual.substring(11, 16)), 2);
+		Integer constantOrAdress = Integer.parseInt((instrucaoAtual.substring(16, 32)), 2);
+		
 	
 	}
 
