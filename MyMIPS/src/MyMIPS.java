@@ -14,10 +14,13 @@ public class MyMIPS implements MIPS {
 		this.console = Simulator.getConsole();
 	}
 	
+	boolean PC4 = true;
+	
 	@Override
 	public void execute(State state) throws Exception {
 		
 		Integer PC = state.getPC();
+		PC4 = true;
 		
 		if (PC.equals(0)) {
 			state.writeRegister(28, 0x1800);
@@ -35,7 +38,10 @@ public class MyMIPS implements MIPS {
 			InstTipoI(instrucaoAtual, state);
 		}
 		
-		state.setPC(state.getPC() + 4);				
+		if (PC4) {
+			state.setPC(state.getPC() + 4);	
+		}
+		PC4 = true;
 	}
 	
 	public static void main(String[] args) {
@@ -534,8 +540,15 @@ public class MyMIPS implements MIPS {
 		Integer valorRS = state.readRegister(rs);
 		Integer valorRT = state.readRegister(rt);
 		Integer resultado = 0;
+		Integer valorRS = state.readRegister(rs);
+		String singExtImm = "";
+		String subStringRT = "";
+		String StringRT = "";
+		Integer valorSingExtImm = 0;
+		Integer dadoMemoria = 0;
+		String opcode = instrucaoAtual.substring(0, 6);
 		
-		switch(op) {
+		switch(opcode) {
 			case "001000": //FUN플O ADDI CONFIRAM SE FIZ CERTO.
 				if((Integer.toBinaryString(constantOrAddress).charAt(0)) == '1') {
 					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '1', 32)), 2);
@@ -623,7 +636,9 @@ public class MyMIPS implements MIPS {
 				
 				if(valorRT == valorRS) {
 					state.setPC(result);
+					PC4 = false;
 				}
+				
 			break;
 			
 			case "000101": //FUN플O BNE
@@ -658,6 +673,7 @@ public class MyMIPS implements MIPS {
 				
 				if(valorRT != valorRS) {
 					state.setPC(result);
+					PC4 = false;
 				}
 			break;
 			
@@ -693,18 +709,149 @@ public class MyMIPS implements MIPS {
 				
 				state.writeRegister(rt, result);
 				
-			
 			break;
+	
+			switch (opcode) {
+			case "100100": // FUN플O LBU
+				singExtImm = instrucaoAtual.substring(16,32);
+					if (singExtImm.charAt(0) == '1') {
+						singExtImm = completeToLeft(singExtImm, '1', 32);
+					} else {
+						singExtImm = completeToLeft(singExtImm, '0', 32);
+					}
+					
+					valorSingExtImm = Integer.parseInt(singExtImm, 2);
+					
+					dadoMemoria = state.readWordDataMemory(valorRS + valorSingExtImm);
+					
+					Integer byteRT = Integer.parseInt(completeToLeft((Integer.toBinaryString(dadoMemoria)).substring(24, 32), '0', 32), 2);
+					
+					state.writeRegister(rt, byteRT);
+				break;
+
+			case "100101": // FUN플O LHU
+				singExtImm = instrucaoAtual.substring(16,32);
+					if (singExtImm.charAt(0) == '1') {
+						singExtImm = completeToLeft(singExtImm, '1', 32);
+					} else {
+						singExtImm = completeToLeft(singExtImm, '0', 32);
+					}
+					
+					valorSingExtImm = Integer.parseInt(singExtImm, 2);
+					
+					dadoMemoria = state.readWordDataMemory(valorRS + valorSingExtImm);
+					
+					Integer halfRT = Integer.parseInt(completeToLeft((Integer.toBinaryString(dadoMemoria)).substring(16, 32), '0', 32), 2);
+					
+					state.writeRegister(rt, halfRT);
+				break;
 				
+			case "001111": //FUN플O LUI
+					String adress = instrucaoAtual.substring(16, 32);
+					valorRT = Integer.parseInt((adress + "0000000000000000"), 2); // 16 0's
+					
+					state.writeRegister(rt, valorRT);
+				break;
+				
+			case "100011": //FUN플O LW
+				singExtImm = instrucaoAtual.substring(16,32);
+				if (singExtImm.charAt(0) == '1') {
+					singExtImm = completeToLeft(singExtImm, '1', 32);
+				} else {
+					singExtImm = completeToLeft(singExtImm, '0', 32);
+				}
+				
+				valorSingExtImm = Integer.parseInt(singExtImm, 2);
+				
+				dadoMemoria = state.readWordDataMemory(valorRS + valorSingExtImm);
+
+				state.writeRegister(rt, dadoMemoria);
+				
+				break;
+				
+			case "101000": //FUN플O SB
+				singExtImm = instrucaoAtual.substring(16,32);
+				if (singExtImm.charAt(0) == '1') {
+					singExtImm = completeToLeft(singExtImm, '1', 32);
+				} else {
+					singExtImm = completeToLeft(singExtImm, '0', 32);
+				}
+				
+				valorSingExtImm = Integer.parseInt(singExtImm, 2);
+				
+				subStringRT = (Integer.toBinaryString(state.readRegister(rt))).substring(24, 32);
+
+				Integer dadoByteMemoria = state.readWordDataMemory(valorRS + valorSingExtImm);
+				
+				StringRT = ((Integer.toBinaryString(dadoByteMemoria)).substring(0, 24)) + subStringRT;
+				
+				valorRT = Integer.parseInt(StringRT, 2);
+				
+				state.writeWordDataMemory((valorRS + valorSingExtImm), valorRT);
+				
+				break;
+				
+			case "101001": //FUN플O SH
+				singExtImm = instrucaoAtual.substring(16,32);
+				if (singExtImm.charAt(0) == '1') {
+					singExtImm = completeToLeft(singExtImm, '1', 32);
+				} else {
+					singExtImm = completeToLeft(singExtImm, '0', 32);
+				}
+				
+				valorSingExtImm = Integer.parseInt(singExtImm, 2);
+				
+				subStringRT = (Integer.toBinaryString(state.readRegister(rt))).substring(16, 32);
+
+				Integer dadoHalfMemoria = state.readWordDataMemory(valorRS + valorSingExtImm);
+				
+				StringRT = ((Integer.toBinaryString(dadoHalfMemoria)).substring(0, 16)) + subStringRT;
+				
+				valorRT = Integer.parseInt(StringRT, 2);
+				
+				state.writeWordDataMemory((valorRS + valorSingExtImm), valorRT);
+				
+				break;
+				
+			case "101011": //FUN플O SW
+				singExtImm = instrucaoAtual.substring(16,32);
+				if (singExtImm.charAt(0) == '1') {
+					singExtImm = completeToLeft(singExtImm, '1', 32);
+				} else {
+					singExtImm = completeToLeft(singExtImm, '0', 32);
+				}
+				
+				valorSingExtImm = Integer.parseInt(singExtImm, 2);
+				
+				state.writeWordDataMemory((valorRS + valorSingExtImm), state.readRegister(rt));
+				
+				break;	
+			
 			default:
 				break;
-		
-		
-		}
-		
-	
+			}
 	}
 
 	public static void InstTipoJ (String instrucaoAtual, State state) {
-	
+		String opcode = instrucaoAtual.substring(0, 6);
+		String adress = instrucaoAtual.substring(6, 32);
+		Integer jumpAddress = 0;
+		
+		switch (opcode) {
+		case "000010": // FUN플O J
+				jumpAddress = Integer.parseInt((Integer.toString(state.getPC() + 4)).substring(0, 4) + adress + "00");
+				state.setPC(jumpAddress);
+				PC4 = false;
+			break;
+				
+		case "000011": // FUN플O JAL
+				state.writeRegister(31, (state.getPC() + 4));
+				jumpAddress = Integer.parseInt((Integer.toString(state.getPC() + 4)).substring(0, 4) + adress + "00");
+				state.setPC(jumpAddress);
+				PC4 = false;			
+			break;
+			
+		default:
+			break;
+		}
 	}
