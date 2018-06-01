@@ -59,6 +59,7 @@ public class MyMIPS implements MIPS {
 		return result;
 	}
 	
+	
 	public static String BinarioComSinal(String value, int size) {
 		if (value == null) {
 			value = "";
@@ -529,7 +530,24 @@ public class MyMIPS implements MIPS {
 	public static void InstTipoI (String instrucaoAtual, State state) {
 		Integer rs = Integer.parseInt((instrucaoAtual.substring(6, 11)), 2);
 		Integer rt = Integer.parseInt((instrucaoAtual.substring(11, 16)), 2);
-		Integer constantOrAdress = Integer.parseInt((instrucaoAtual.substring(16, 32)), 2);
+		Integer constantOrAddress = instrucaoAtual.substring(16, 32)), 2);
+		Integer valorRS = state.readRegister(rs);
+		Integer valorRT = state.readRegister(rt);
+		Integer resultado = 0;
+		
+		switch(op) {
+			case "001000": //FUNÇÃO ADDI CONFIRAM SE FIZ CERTO.
+				valorRS = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRS), 32), 2);
+				constantOrAddress = Integer.parseInt((BinarioComsinal(constantOrAdress, 32)), 2);
+				result = valorRS + constantOrAddress;
+				state.writeRegister(rt, result);
+			break;
+			
+			default:
+				break;
+		
+		
+		}
 		
 	
 	}
