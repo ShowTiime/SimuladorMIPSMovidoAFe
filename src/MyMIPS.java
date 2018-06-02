@@ -66,17 +66,25 @@ public class MyMIPS implements MIPS {
 	}
 	
 	
-	public static String BinarioComSinal(String value, int size) {
+	public static String BinarioComSinal(String value, int size) { //Modificada ***
 		if (value == null) {
 			value = "";
 		}
+		
 		String result = value;
 		
+		if (result.length() != 32)  {
+			while ( result.length() < size ) {
+				result = '0' + result;
+			} 
+		} else {
+
+		/*
 		if ((result.charAt(0)) == '1') {
 			  while ( result.length() < size ) {
 				result = '1' + result;
 			}
-			
+		*/	
 			String novoResult = "";
 			  
 			for (int i = 31; i >= 0; i--) { //Complemento a 1
@@ -102,15 +110,9 @@ public class MyMIPS implements MIPS {
 			}
 			
 			result = novoResultFinal;
-			
 			result = '-' + result;
-			
-		} else {
-			while ( result.length() < size ) {
-				result = '0' + result;
-			}
 		}
-		
+
 		return result;
 	}
 	
@@ -547,16 +549,19 @@ public class MyMIPS implements MIPS {
 		Integer valorSingExtImm = 0;
 		Integer dadoMemoria = 0;
 		String opcode = instrucaoAtual.substring(0, 6);
+		String texto = "";
 		
 		switch(opcode) {
-			case "001000": //FUNÇÃO ADDI CONFIRAM SE FIZ CERTO.
-				if((Integer.toBinaryString(constantOrAddress).charAt(0)) == '1') {
+			case "001000": //FUNÇÃO ADDI CONFIRAM SE FIZ CERTO. ***
+				texto = instrucaoAtual.substring(16, 32);
+				if((texto.charAt(0)) == '1') {
 					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '1', 32)), 2);
 				}else {
 					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '0', 32)), 2);
 				}
 				
-				if((Integer.toBinaryString(valorRS).charAt(0)) == '1') {
+				texto = instrucaoAtual.substring(6, 11);
+				if((texto.charAt(0)) == '1') {
 					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
 				}else {
 					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
