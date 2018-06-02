@@ -4,5 +4,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Amaury/git/SimuladorMIPSMovidoAFe/lib/jline-2.12.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Amaury/git/SimuladorMIPSMovidoAFe/lib/MIPS-1.3.jar" sourcepath="lib/MIPS-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jline-2.12.1.jar"/>
+	<classpathentry kind="lib" path="lib/MIPS-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/MIPS-1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
