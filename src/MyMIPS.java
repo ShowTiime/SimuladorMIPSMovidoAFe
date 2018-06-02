@@ -77,7 +77,7 @@ public class MyMIPS implements MIPS {
 			while ( result.length() < size ) {
 				result = '0' + result;
 			} 
-		} else {
+		} else if (result.charAt(0) == '1'){
 
 		/*
 		if ((result.charAt(0)) == '1') {
@@ -153,24 +153,13 @@ public class MyMIPS implements MIPS {
 		String valorRS = rgRS;
 		String valorRT = rgRT;
 		
-		if ((valorRS.charAt(0)) == '1') { //completar 32 bits
-			while ( valorRS.length() < size ) {
-				valorRS = '1' + valorRS;
-			}
-		} else {
-			while ( valorRS.length() < size ) {
-				valorRS = '0' + valorRS;
-			}
+		
+		while ( valorRS.length() < size ) {
+			valorRS = '0' + valorRS;
 		}
 		
-		if ((valorRT.charAt(0)) == '1') { //completar 32 bits
-			while ( valorRT.length() < size ) {
-				valorRT = '1' + valorRT;
-			}
-		} else {
-			while ( valorRT.length() < size ) {
-				valorRT = '0' + valorRT;
-			}
+		while ( valorRT.length() < size ) {
+			valorRT = '0' + valorRT;
 		}
 		
 		String resultadoFinal = "";
@@ -194,14 +183,8 @@ public class MyMIPS implements MIPS {
 		
 		String valorRS = rgRS;
 		
-			if ((valorRS.charAt(0)) == '1') { //completar 32 bits
-				while ( valorRS.length() < size ) {
-					valorRS = '1' + valorRS;
-				}
-			} else {
-				while ( valorRS.length() < size ) {
-					valorRS = '0' + valorRS;
-				}
+			while ( valorRS.length() < size ) {
+				valorRS = '0' + valorRS;
 			}
 			
 		return valorRS;
@@ -219,24 +202,12 @@ public class MyMIPS implements MIPS {
 		String valorRS = rgRS;
 		String valorRT = rgRT;
 		
-		if ((valorRS.charAt(0)) == '1') { //completar 32 bits
-			while ( valorRS.length() < size ) {
-				valorRS = '1' + valorRS;
-			}
-		} else {
-			while ( valorRS.length() < size ) {
-				valorRS = '0' + valorRS;
-			}
+		while ( valorRS.length() < size ) {
+			valorRS = '0' + valorRS;
 		}
 		
-		if ((valorRT.charAt(0)) == '1') { //completar 32 bits
-			while ( valorRT.length() < size ) {
-				valorRT = '1' + valorRT;
-			}
-		} else {
-			while ( valorRT.length() < size ) {
-				valorRT = '0' + valorRT;
-			}
+		while ( valorRT.length() < size ) {
+			valorRT = '0' + valorRT;
 		}
 		
 		String resultadoFinal = "";
@@ -264,24 +235,12 @@ public class MyMIPS implements MIPS {
 		String valorRS = rgRS;
 		String valorRT = rgRT;
 		
-		if ((valorRS.charAt(0)) == '1') { //completar 32 bits
-			while ( valorRS.length() < size ) {
-				valorRS = '1' + valorRS;
-			}
-		} else {
-			while ( valorRS.length() < size ) {
-				valorRS = '0' + valorRS;
-			}
+		while ( valorRS.length() < size ) {
+			valorRS = '0' + valorRS;
 		}
 		
-		if ((valorRT.charAt(0)) == '1') { //completar 32 bits
-			while ( valorRT.length() < size ) {
-				valorRT = '1' + valorRT;
-			}
-		} else {
-			while ( valorRT.length() < size ) {
-				valorRT = '0' + valorRT;
-			}
+		while ( valorRT.length() < size ) {
+			valorRT = '0' + valorRT;
 		}
 		
 		String resultadoFinal = "";
@@ -297,6 +256,7 @@ public class MyMIPS implements MIPS {
 		return resultadoFinal;
 	}
 	
+	/*
 	public static String sltAuxiliar(String value, int size) {
 		if (value == null) {
 			value = "";
@@ -346,7 +306,9 @@ public class MyMIPS implements MIPS {
 		return result;
 		
 	}
+	*/
 	
+	/*
 	public static String sltuAuxiliar(String value, int size) {
 		if (value == null) {
 			value = "";
@@ -366,7 +328,9 @@ public class MyMIPS implements MIPS {
 			
 		return valorRS;
 	}
+	*/
 	
+	/*
 	public static String sllAuxiliar(String value, int size) {
 		if (value == null) {
 			value = "";
@@ -415,8 +379,7 @@ public class MyMIPS implements MIPS {
 		
 		return result;
 	}
-	
-	//aqui
+	*/
 	
 	public static void InstTipoR (String instrucaoAtual, State state) {
 		
@@ -438,35 +401,34 @@ public class MyMIPS implements MIPS {
 			break;
 			
 		case "100001": 	//FUN플O ADDU
-				valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
-				valorRT = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRT), '0', 32), 2);
+				valorRS = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRS), 32), 2);
+				valorRT = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRT), 32), 2);
 				resultado = valorRS + valorRT;
 				state.writeRegister(rd, resultado);
 			break;
 			
 		case "100100": //FUN플O AND
-				resultado = Integer.parseInt(andAuxiliar(Integer.toBinaryString(valorRS), Integer.toBinaryString(valorRT), 32), 2);
+				resultado = Integer.parseInt(BinarioComSinal(andAuxiliar(Integer.toBinaryString(valorRS), Integer.toBinaryString(valorRT), 32), 32), 2);
 				state.writeRegister(rd, resultado);
 			break;
 			
 		case "001000":	//FUN플O JR
-				resultado = Integer.parseInt(jrAuxiliar(Integer.toString(valorRS), 32), 2);
-				state.setPC(resultado - 4);
+				resultado = Integer.parseInt(jrAuxiliar(Integer.toBinaryString(valorRS), 32), 2);
+				state.setPC(resultado);
+				PC4 = false;
 			break;
 			
-		case "100111":	//FUN플O NOR
-				resultado = Integer.parseInt(norAuxiliar(Integer.toBinaryString(valorRS), Integer.toBinaryString(valorRT), 32), 2);
+		case "100111":	//FUN플O NOR			
+				resultado = Integer.parseInt(BinarioComSinal(norAuxiliar(Integer.toBinaryString(valorRS), Integer.toBinaryString(valorRT), 32), 32), 2);
 				state.writeRegister(rd, resultado);
 			break;
 			
 		case "100101":	//FUN플O OR
-				resultado = Integer.parseInt(orAuxiliar(Integer.toBinaryString(valorRS), Integer.toBinaryString(valorRT), 32), 2);
+				resultado = Integer.parseInt(BinarioComSinal(orAuxiliar(Integer.toBinaryString(valorRS), Integer.toBinaryString(valorRT), 32), 32), 2); 
 				state.writeRegister(rd, resultado);
 			break;
 			
 		case "101010":	//FUN플O SLT
-			valorRS = Integer.parseInt(sltAuxiliar(Integer.toBinaryString(valorRS), 32), 2);
-			valorRT = Integer.parseInt(sltAuxiliar(Integer.toBinaryString(valorRT), 32), 2);
 			
 			if (valorRS < valorRT) {
 				resultado = 1;
@@ -478,10 +440,10 @@ public class MyMIPS implements MIPS {
 			break;
 			
 		case "101011":	//FUN플O SLTU
-				valorRS = Integer.parseInt(sltuAuxiliar(Integer.toBinaryString(valorRS), 32), 2);
-				valorRT = Integer.parseInt(sltuAuxiliar(Integer.toBinaryString(valorRT), 32), 2);
+				long valorRSBig = Long.parseLong(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
+				long valorRTBig = Long.parseLong(completeToLeft(Integer.toBinaryString(valorRT), '0', 32), 2);
 				
-				if (valorRS < valorRT) {
+				if (valorRSBig < valorRTBig) {
 					resultado = 1;
 				} else {
 					resultado = 0;
@@ -491,13 +453,13 @@ public class MyMIPS implements MIPS {
 			break;
 			
 		case "000000":	//FUN플O SLL
-				valorRT = Integer.parseInt(sllAuxiliar(Integer.toBinaryString(valorRT), 32), 2);
+				valorRT = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRT), 32), 2);
 				
 				if (shamt != 0) {
-					resultado = valorRT * 2;
-					for (int i = 1; i < shamt; i++) {
-						resultado *= 2;
-					}
+					resultado = valorRT << shamt;
+					//for (int i = 1; i < shamt; i++) {
+					//	resultado *= 2;
+					//}
 				} else {
 					resultado = valorRT;
 				}
@@ -509,7 +471,6 @@ public class MyMIPS implements MIPS {
 				valorRT = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRT), 32), 2);
 				if(shamt != 0) {
 					resultado = valorRT >> shamt;
-				
 				}else {
 					resultado = valorRT;
 				}
@@ -524,8 +485,8 @@ public class MyMIPS implements MIPS {
 			break;
 			
 		case "100011": //FUN플O SUBU
-				valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
-				valorRT = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRT), '0', 32), 2);
+				valorRS = Integer.parseInt((BinarioComSinal(Integer.toBinaryString(valorRS), 32)), 2);
+				valorRT = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRT), 32), 2);
 				resultado = valorRS - valorRT;
 				state.writeRegister(rd, resultado);
 			break;
@@ -555,17 +516,20 @@ public class MyMIPS implements MIPS {
 			case "001000": //FUN플O ADDI CONFIRAM SE FIZ CERTO. ***
 				texto = instrucaoAtual.substring(16, 32);
 				if((texto.charAt(0)) == '1') {
-					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '1', 32)), 2);
+					constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
 				}else {
-					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '0', 32)), 2);
+					constantOrAddress = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(16, 32), 32), 2);
 				}
 				
 				texto = instrucaoAtual.substring(6, 11);
 				if((texto.charAt(0)) == '1') {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
+					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 32), 32), 2);
 				}else {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
+					valorRS = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(6, 11), 32), 2);
 				}
+				
+				//constantOrAddress = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(constantOrAddress), 32), 2);
+				//valorRS = Integer.parseInt(BinarioComSinal(Integer.toBinaryString(valorRS), 32), 2);
 				result = valorRS + constantOrAddress;
 				state.writeRegister(rt, result);
 			break;
