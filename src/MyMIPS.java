@@ -503,6 +503,7 @@ public class MyMIPS implements MIPS {
 		Integer constantOrAddress = Integer.parseInt(instrucaoAtual.substring(16, 32), 2);
 		Integer valorRS = state.readRegister(rs);
 		Integer valorRT = state.readRegister(rt);
+		Integer valorConstant = state.readRegister(constantOrAddress);
 		Integer result = 0;
 		String singExtImm = "";
 		String subStringRT = "";
@@ -535,7 +536,7 @@ public class MyMIPS implements MIPS {
 			break;
 			
 			case "001001": //FUNÇÂO ADDIU
-				constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '0', 32)), 2);
+				constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
 				valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
 				
 				result = valorRS + constantOrAddress;
@@ -543,64 +544,48 @@ public class MyMIPS implements MIPS {
 			break;
 			
 			case "001100": //FUNÇÃO ANDI
-				//o rs pode ser negativo por isso esses ifs.
-				
-				if((Integer.toBinaryString(valorRS).charAt(0)) == '1') {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
+				texto = instrucaoAtual.substring(16, 32);
+				if((texto.charAt(0)) == '1') {
+					constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
 				}else {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
+					constantOrAddress = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(16, 32), 32), 2);
 				}
-				//Como a função ANDI ela estende o imediato com zeros, eu imagino que não seja necessário nenhum if.
-				constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '0', 32)), 2);
 				
-				result = valorRS & constantOrAddress;
+				texto = instrucaoAtual.substring(6, 11);
+				if((texto.charAt(0)) == '1') {
+					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 32), 32), 2);
+				}else {
+					valorRS = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(6, 11), 32), 2);
+				}
+				
+				result = (valorRS & constantOrAddress);
 				state.writeRegister(rt, result);
 			break;
 				
 			case "001101": // FUNÇÃO ORI
-				//o rs pode ser negativo por isso esses ifs.
+				constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '0', 32), 32), 2);
+				valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '0', 32), 32), 2);
 				
-				if((Integer.toBinaryString(valorRS).charAt(0)) == '1') {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
-				}else {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
-				}
-				//Como a função ORI ela estende o imediato com zeros, eu imagino que não seja necessário nenhum if.
-				constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '0', 32)), 2);
 				
-				result = valorRS | constantOrAddress;
+				result = (valorRS | constantOrAddress);
 				state.writeRegister(rt, result);
 			break;
 				
 			case "000100": //FUNÇÃO BEQ
-				
-				char aux = Integer.toBinaryString(constantOrAddress).charAt(0);
+				texto = instrucaoAtual.substring(16, 32);
+				char aux = texto.charAt(0);
 				String bitZeros = "00";
 				String auxConstant = "";
 				String fim = "";
 				short cont = 14;
 				
 				
-				if((Integer.toBinaryString(valorRS).charAt(0)) == '1') {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
-				}else {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
-				}
-				
-				if((Integer.toBinaryString(valorRT).charAt(0)) == '1') {
-					valorRT = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRT), '1', 32), 2);
-				}else {
-					valorRT = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRT), '0', 32), 2);
-				}
-				
-				
 				while(cont > 0) {
 					auxConstant += aux;
 					cont--;
 				}
-				
-				fim = auxConstant+constantOrAddress+bitZeros;
-				constantOrAddress = Integer.parseInt((completeToLeft(fim, fim.charAt(0), 32)), 2);
+				fim = auxConstant+texto+bitZeros; 
+				constantOrAddress = Integer.parseInt(BinarioComSinal(fim, 32), 2);
 				result = state.getPC()+constantOrAddress+4;
 				
 				if(valorRT == valorRS) {
@@ -611,33 +596,20 @@ public class MyMIPS implements MIPS {
 			break;
 			
 			case "000101": //FUNÇÃO BNE
-				char aux2 = Integer.toBinaryString(constantOrAddress).charAt(0);
+				texto = instrucaoAtual.substring(16, 32);
+				char aux2 = texto.charAt(0);
 				String bitZeros2 = "00";
 				String auxConstant2 = "";
 				String fim2 = "";
 				short cont2 = 14;
 				
 				
-				if((Integer.toBinaryString(valorRS).charAt(0)) == '1') {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
-				}else {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
-				}
-				
-				if((Integer.toBinaryString(valorRT).charAt(0)) == '1') {
-					valorRT = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRT), '1', 32), 2);
-				}else {
-					valorRT = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRT), '0', 32), 2);
-				}
-				
-				
 				while(cont2 > 0) {
 					auxConstant2 += aux2;
 					cont2--;
 				}
-				
-				fim = auxConstant2+constantOrAddress+bitZeros2;
-				constantOrAddress = Integer.parseInt((completeToLeft(fim2, fim2.charAt(0), 32)), 2);
+				fim2 = auxConstant2+texto+bitZeros2; 
+				constantOrAddress = Integer.parseInt(BinarioComSinal(fim2, 32), 2);
 				result = state.getPC()+constantOrAddress+4;
 				
 				if(valorRT != valorRS) {
@@ -647,21 +619,22 @@ public class MyMIPS implements MIPS {
 			break;
 			
 			case "001010": //FUNÇÃO STLI
-				result = 0;
-				
-				if(Integer.toBinaryString(constantOrAddress).charAt(0) == '1') {
-					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '1', 32)), 2);
-				} else {
-					constantOrAddress = Integer.parseInt((completeToLeft(Integer.toBinaryString(constantOrAddress), '0', 32)), 2);
+				/*
+				texto = instrucaoAtual.substring(16, 32);
+				if((texto.charAt(0)) == '1') {
+					constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
+				}else {
+					constantOrAddress = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(16, 32), 32), 2);
+				}
+				*/
+				texto = instrucaoAtual.substring(6, 11);
+				if((texto.charAt(0)) == '1') {
+					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 16), 16), 2);
+				}else {
+					valorRS = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(6, 11), 16), 2);
 				}
 				
-				if((Integer.toBinaryString(valorRS).charAt(0)) == '1') {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '1', 32), 2);
-				} else {
-					valorRS = Integer.parseInt(completeToLeft(Integer.toBinaryString(valorRS), '0', 32), 2);
-				}
-				
-				if(valorRS < constantOrAddress) {
+				if(valorRS < valorConstant) {
 					result = 1;
 				}
 				
