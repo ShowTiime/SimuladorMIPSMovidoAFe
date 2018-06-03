@@ -660,7 +660,7 @@ public class MyMIPS implements MIPS {
 					valorRS = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(6, 11), 32), 2);
 				}
 				
-				if(valorRS > constantOrAddress) { //GAMBIARRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				if(valorRS > constantOrAddress) { //GAMBIARRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 					result = 1;
 				}
 				
