@@ -77,7 +77,9 @@ public class MyMIPS implements MIPS {
 			while ( result.length() < size ) {
 				result = '0' + result;
 			} 
-		} else if (result.charAt(0) == '1'){
+		}
+		
+		if (result.charAt(0) == '1'){
 
 		/*
 		if ((result.charAt(0)) == '1') {
@@ -503,7 +505,7 @@ public class MyMIPS implements MIPS {
 		Integer constantOrAddress = Integer.parseInt(instrucaoAtual.substring(16, 32), 2);
 		Integer valorRS = state.readRegister(rs);
 		Integer valorRT = state.readRegister(rt);
-		Integer valorConstant = state.readRegister(constantOrAddress);
+		//Integer valorConstant = state.readRegister(constantOrAddress);
 		Integer result = 0;
 		String singExtImm = "";
 		String subStringRT = "";
@@ -624,21 +626,47 @@ public class MyMIPS implements MIPS {
 				if((texto.charAt(0)) == '1') {
 					constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
 				}else {
-					constantOrAddress = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(16, 32), 32), 2);
-				}
-				*/
+					constantOrAddress = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(16, 32), 32), 2); 
+					
+					
+				}				
+				////
+				
 				texto = instrucaoAtual.substring(6, 11);
 				if((texto.charAt(0)) == '1') {
-					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 16), 16), 2);
+					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 32), 32), 2);										
 				}else {
-					valorRS = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(6, 11), 16), 2);
+					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 32), 32), 2);
 				}
 				
-				if(valorRS < valorConstant) {
+				String texto2 = instrucaoAtual.substring(16, 32);
+				if((texto2.charAt(0)) == '1') {
+					valorConstant = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);										
+				}else {
+					valorConstant = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
+				}*/
+				
+				texto = instrucaoAtual.substring(16, 32);
+				if((texto.charAt(0)) == '1') {
+					constantOrAddress = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(16, 32), '1', 32), 32), 2);
+				}else {
+					constantOrAddress = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(16, 32), 32), 2);
+				}
+				
+				texto = instrucaoAtual.substring(6, 11);
+				if((texto.charAt(0)) == '1') {
+					valorRS = Integer.parseInt(BinarioComSinal(completeToLeft(instrucaoAtual.substring(6, 11), '1', 32), 32), 2);
+				}else {
+					valorRS = Integer.parseInt(BinarioComSinal(instrucaoAtual.substring(6, 11), 32), 2);
+				}
+				
+				if(valorRS > constantOrAddress) { //GAMBIARRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 					result = 1;
 				}
 				
 				state.writeRegister(rt, result);
+				
+				
 			break;
 			
 			case "001011": //FUNÇÃO SLTIU
